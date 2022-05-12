@@ -59,5 +59,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+//        http.csrf().disable()
+//                .authorizeRequests().antMatchers("/api/auth/**", "/api/test/**")
+//                .permitAll().anyRequest().authenticated().and().
+//                exceptionHandling().authenticationEntryPoint(unauthEntryPointJwt).and().sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//
+//        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
 }

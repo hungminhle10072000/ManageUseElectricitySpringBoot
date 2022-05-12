@@ -9,10 +9,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serializable;
 
 @Component
-public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+public class AuthEntryPointJwt implements AuthenticationEntryPoint, Serializable {
 
+    private static final long serialVersionUID = -7858869558953243875L;
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationEntryPoint.class);
 
     @Override
