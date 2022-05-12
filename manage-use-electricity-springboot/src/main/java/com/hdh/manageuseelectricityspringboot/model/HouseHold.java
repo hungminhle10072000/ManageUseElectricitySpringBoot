@@ -1,0 +1,20 @@
+package com.hdh.manageuseelectricityspringboot.model;
+
+import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table
+@Data
+@OnDelete(action = OnDeleteAction.CASCADE)
+public class HouseHold extends Customer{
+
+    @Column
+    private String indentityCard;
+
+}
