@@ -2,6 +2,7 @@ package com.hdh.manageuseelectricityspringboot.controller;
 
 import com.hdh.manageuseelectricityspringboot.common.ERole;
 import com.hdh.manageuseelectricityspringboot.common.JwtUtils;
+import com.hdh.manageuseelectricityspringboot.dto.JwtResponse;
 import com.hdh.manageuseelectricityspringboot.dto.LoginRequest;
 import com.hdh.manageuseelectricityspringboot.dto.MessageResponse;
 import com.hdh.manageuseelectricityspringboot.dto.SignUpRequest;
@@ -9,6 +10,7 @@ import com.hdh.manageuseelectricityspringboot.model.Role;
 import com.hdh.manageuseelectricityspringboot.model.User;
 import com.hdh.manageuseelectricityspringboot.repository.RoleRepository;
 import com.hdh.manageuseelectricityspringboot.repository.UserRepository;
+import com.hdh.manageuseelectricityspringboot.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +22,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600) ///maxAge 3600s
 @RestController
@@ -42,16 +46,27 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-//    @PostMapping("/signin")
-//    public ResponseEntity<?> authenticateUser(@Validated @RequestBody LoginRequest loginRequest){
-//        Authentication authentication = authenticationManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        String jwt = jwtUtils.generateJwtToken(authentication);
-//
-//
-//    }
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Validated @RequestBody LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new JwtResponse(
+                jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles));
+
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Validated @RequestBody SignUpRequest signUpRequest) {
